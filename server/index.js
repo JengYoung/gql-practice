@@ -4,12 +4,27 @@ const { ApolloServer } = require('apollo-server');
  * NOTE: 리졸버 함수에서는 정수, 문자열, 불리언 같은 값 외에도 객체 역시 반환이 가능하다.
  */
 const typeDefs = `
+  enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+  }
+
   type Photo {
     id: ID!
     url: String!
     name: String!
     description: String
-  }  
+    category: PhotoCategory!
+  }
+
+  input PostPhotoInput {
+    name: String!
+    category: PhotoCategory=PORTRAIT
+    description: String
+  }
 
   type Query {
     totalPhotos: Int!
@@ -17,7 +32,7 @@ const typeDefs = `
   }
   
   type Mutation {
-    postPhoto(name: String! description: String): Photo!
+    postPhoto(input: PostPhotoInput!): Photo!
   }
 `
 
@@ -36,13 +51,16 @@ const resolvers = {
     postPhoto(parent, args) { 
       const newPhoto = {
         id: _id++,
-        ...args
+        ...args.input
       }
       
       photos.push(newPhoto)
 
       return newPhoto;
     }
+  },
+  Photo: {
+    url: parent => `http://yoursite.com/img/${parent.id}.jpg` // resolver 함수에 전달되는 첫 번째 인자는 언제나 `parent` 객체이다.
   }
 }
 
