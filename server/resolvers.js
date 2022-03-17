@@ -15,7 +15,7 @@ const users = [
     githubLogin: 'eaque',
     name: 'Scot Schmidt'
   },
-]
+];
 
 const photos = [
   {
@@ -61,7 +61,7 @@ const tags = [
     photoID: '2',
     userID: 'gPlake'
   },
-]
+];
 
 const resolvers = {
   Query: {
@@ -108,6 +108,7 @@ const resolvers = {
       .map(tag => tag.photoID) // 태그 배열을 photoID만 담아 변환
       .map(photoID => photos.find(p => p.id === photoID)) // photoID 배열을 사진 객체 배열로 전환
   },
+  
   // Custom Scalar Type
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
@@ -119,4 +120,4 @@ const resolvers = {
 };
 
 // export default resolvers
-module.exports = resolvers
+module.exports = resolvers;

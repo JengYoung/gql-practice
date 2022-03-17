@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "dotenv": "^16.0.0",
     "graphql-playground-middleware-express": "^1.7.23"
   }
 }

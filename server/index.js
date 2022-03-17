@@ -1,3 +1,6 @@
+const { MongoClient } = require('mongodb');
+require('dotenv').config()
+
 const expressPlayground = require('graphql-playground-middleware-express').default;
 const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
@@ -5,72 +8,30 @@ const express = require('express');
 /*
  * NOTE: 리졸버 함수에서는 정수, 문자열, 불리언 같은 값 외에도 객체 역시 반환이 가능하다.
  */
-// const typeDefs = `
-//   scalar DateTime
-
-//   type User {
-//     githubLogin: ID!
-//     name: String
-//     avatar: String
-//     postedPhotos: [Photo!]!
-//     inPhotos: [Photo!]!
-//   }
-
-//   enum PhotoCategory {
-//     SELFIE
-//     PORTRAIT
-//     ACTION
-//     LANDSCAPE
-//     GRAPHIC
-//   }
-
-//   type Photo {
-//     id: ID!
-//     url: String!
-//     name: String!
-//     description: String
-//     category: PhotoCategory!
-//     postedBy: User!
-//     taggedUsers: [User!]!
-//     created: DateTime!
-//   }
-
-//   input PostPhotoInput {
-//     name: String!
-//     category: PhotoCategory=PORTRAIT
-//     description: String
-//   }
-
-//   type Query {
-//     totalPhotos: Int!
-//     allPhotos(after: DateTime): [Photo!]!
-//   }
-  
-//   type Mutation {
-//     postPhoto(input: PostPhotoInput!): Photo!
-//   }
-// `
 
 const { redFileSync, readFileSync } = require('fs');
 const typeDefs = readFileSync('./types/typeDefs.graphql', 'UTF-8');
-
 const resolvers = require('./resolvers');
-
-// const d = new Date("Tuesday March");
-// console.log(d.toString()); // Invalid Date
-
-// const serialize = value => new Date(value).toISOString(); // "2022-03-17T13:20:00.000Z"
-
-// const parseValue = value => new Date(value);
-
-// const parseLiteral = ast => ast.value;
-
 
 (async () => {
   const app = express();
+  const MONGO_DB = process.env.DB_HOST;
+
+  const client = await MongoClient.connect(
+    MONGO_DB,
+    {
+       useNewUrlParser: true
+    }
+  );
+
+  const db = client.db();
+
+  const context = { db };
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context
   });
 
   await server.start();
