@@ -1,6 +1,11 @@
-const { ApolloServer } = require('apollo-server');
+const expressPlayground = require('graphql-playground-middleware-express').default;
+const { ApolloServer } = require('apollo-server-express');
+const express = require('express');
+
 const { GraphQLScalarType } =require('graphql'); 
 
+const app = express();
+app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
 /*
  * NOTE: 리졸버 함수에서는 정수, 문자열, 불리언 같은 값 외에도 객체 역시 반환이 가능하다.
  */
@@ -177,12 +182,27 @@ const resolvers = {
   })
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
 
-server
-  .listen()
-  .then(({ url }) => console.log(`GraphQL Service running on ${url}`));
+(async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
 
+  await server.start();
+  server.applyMiddleware({ app })
+
+  /**
+   * NOTE: applyMiddleware를 호출하여 미들웨어가 같은 경로에 마운트되도록 호출.
+   */
+
+  // HOME ROUTE를 만듦
+  app.get('/', (req, res) => res.end('PhotoShare API에 오신 것을 환영합니다!'))
+
+  // 특정 포트 리스닝
+
+  app
+    .listen({ port: 4000 }, () => {
+      console.log(`GraphQL Server running at http://localhost:4000${server.graphqlPath}`)
+    })
+})();
