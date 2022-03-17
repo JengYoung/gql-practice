@@ -8,6 +8,6 @@
     "nodemon": "^2.0.15"
   },
   "scripts": {
-    "start": "nodemon -e js,json,graphql"
+    "start:server": "nodemon -e js,json,graphql"
   }
 }

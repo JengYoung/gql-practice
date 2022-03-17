@@ -1,9 +1,20 @@
 const { ApolloServer } = require('apollo-server');
+const { GraphQLScalarType } =require('graphql'); 
 
 /*
  * NOTE: 리졸버 함수에서는 정수, 문자열, 불리언 같은 값 외에도 객체 역시 반환이 가능하다.
  */
 const typeDefs = `
+  scalar DateTime
+
+  type User {
+    githubLogin: ID!
+    name: String
+    avatar: String
+    postedPhotos: [Photo!]!
+    inPhotos: [Photo!]!
+  }
+
   enum PhotoCategory {
     SELFIE
     PORTRAIT
@@ -18,6 +29,9 @@ const typeDefs = `
     name: String!
     description: String
     category: PhotoCategory!
+    postedBy: User!
+    taggedUsers: [User!]!
+    created: DateTime!
   }
 
   input PostPhotoInput {
@@ -28,7 +42,7 @@ const typeDefs = `
 
   type Query {
     totalPhotos: Int!
-    allPhotos: [Photo!]!
+    allPhotos(after: DateTime): [Photo!]!
   }
   
   type Mutation {
@@ -37,12 +51,84 @@ const typeDefs = `
 `
 
 let _id = 0;
-const photos = [];
+// server Test Data
+const users = [
+  {
+    githubLogin: 'mHattrup',
+    name: 'Mike Hattrup'
+  },
+  {
+    githubLogin: 'gPlake',
+    name: 'Glen Plake'
+  },
+  {
+    githubLogin: 'eaque',
+    name: 'Scot Schmidt'
+  },
+]
+
+const photos = [
+  {
+    id: '1',
+    name: 'Dropping the Heart Chute',
+    description: 'The heart chute is one of my favorite chutes',
+    category: 'ACTION',
+    githubUser: 'gPlake',
+    created: "3-28-1977"
+  },
+  {
+    id: '2',
+    name: 'D27877',
+    description: 'Vel fugiat at architecto adipisci voluptatem nulla est aut dolor.',
+    category: 'SELFIE',
+    githubUser: 'eaque',
+    created: "1-2-1985"
+  },
+  {
+    id: '3',
+    name: 'Nesciunt eos corporis qui et.',
+    description: 'Dolor et ut vitae iure vero illum unde.',
+    category: 'LANDSCAPE',
+    githubUser: 'eaque',
+    created: "2018-04-15T19:09:57.308Z"
+  },
+];
+
+const tags = [
+  {
+    photoID: '1',
+    userID: 'gPlake'
+  },
+  {
+    photoID: '2',
+    userID: 'eaque'
+  },
+  {
+    photoID: '2',
+    userID: 'mHattrup'
+  },
+  {
+    photoID: '2',
+    userID: 'gPlake'
+  },
+]
+
+const d = new Date("Tuesday March");
+console.log(d.toString()); // Invalid Date
+
+const serialize = value => new Date(value).toISOString(); // "2022-03-17T13:20:00.000Z"
+
+const parseValue = value => new Date(value);
+
+const parseLiteral = ast => ast.value;
 
 const resolvers = {
   Query: {
     totalPhotos: () => photos.length,
-    allPhotos: () => photos,
+    allPhotos: (parent, args) => {
+      args.after;
+      return photos;
+    },
   },
 
   Mutation: {
@@ -51,7 +137,8 @@ const resolvers = {
     postPhoto(parent, args) { 
       const newPhoto = {
         id: _id++,
-        ...args.input
+        ...args.input,
+        created: new Date()
       }
       
       photos.push(newPhoto)
@@ -59,17 +146,43 @@ const resolvers = {
       return newPhoto;
     }
   },
+
   Photo: {
-    url: parent => `http://yoursite.com/img/${parent.id}.jpg` // resolver 함수에 전달되는 첫 번째 인자는 언제나 `parent` 객체이다.
-  }
-}
+    url: parent => `http://yoursite.com/img/${parent.id}.jpg`, // resolver 함수에 전달되는 첫 번째 인자는 언제나 `parent` 객체이다.
+    postedBy: parent => {
+      return users.find(u => u.githubLogin === parent.githubUser)
+    },
+    taggedUsers: parent => tags
+      .filter(tag => tag.photoID === parent.id) // 현재 사진에 대한 태그만 배열에 담아 반환
+      .map(tag => tag.userID) // 태그 배열을 userID로 전환
+      .map(userID => users.find(u => u.githubLogin === userID))
+  },
+
+  User: {
+    postedPhotos: parent => {
+      return photos.filter(p => p.githubUser === parent.githubLogin)
+    },
+    inPhotos: parent => tags
+      .filter(tag => tag.userID === parent.id) // 현재 사용자에 대한 태그만 배열에 담아 반환
+      .map(tag => tag.photoID) // 태그 배열을 photoID만 담아 변환
+      .map(photoID => photos.find(p => p.id === photoID)) // photoID 배열을 사진 객체 배열로 전환
+  },
+  // Custom Scalar Type
+  DateTime: new GraphQLScalarType({
+    name: 'DateTime',
+    description: 'A valid date time value.',
+    parseValue: value => new Date(value),
+    serialize: value => new Date(value).toISOString(),
+    parseLiteral: ast => ast.value
+  })
+};
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-})
+});
 
 server
   .listen()
-  .then(({ url }) => console.log(`GraphQL Service running on ${url}`))
+  .then(({ url }) => console.log(`GraphQL Service running on ${url}`));
 
