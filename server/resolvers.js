@@ -1,4 +1,7 @@
-const { GraphQLScalarType } =require('graphql'); 
+const { GraphQLScalarType } = require('graphql'); 
+const { requestGithubToken } = require('./utils/auth/githubAuth');
+const { requestGithubUserAccount } = require('./utils/auth/githubAuth');
+const githubAuthResolver = require('./resolvers/auth')
 
 let _id = 0;
 // server Test Data
@@ -65,11 +68,27 @@ const tags = [
 
 const resolvers = {
   Query: {
-    totalPhotos: () => photos.length,
-    allPhotos: (parent, args) => {
-      args.after;
-      return photos;
+    totalPhotos: (parent, args, { db }) => {
+      return db.collection('photos')
+        .estimatedDocumentCount()
     },
+    
+    allPhotos: (parent, args, { db }) => {
+      return db.collection('photos')
+        .find()
+        .toArray()
+    },
+
+    totalUsers: (parent, args, { db}) => {
+      return db.collection('users')
+        .estimatedDocumentCount()
+    },
+
+    allUsers: (parent, args, { db }) => {
+      return db.collection('users')
+        .find()
+        .toArray()
+    }
   },
 
   Mutation: {
@@ -85,6 +104,9 @@ const resolvers = {
       photos.push(newPhoto)
 
       return newPhoto;
+    },
+    githubAuth: async (parent, args, db) => {
+      return await githubAuthResolver(parent, args, db);
     }
   },
 
@@ -108,7 +130,7 @@ const resolvers = {
       .map(tag => tag.photoID) // 태그 배열을 photoID만 담아 변환
       .map(photoID => photos.find(p => p.id === photoID)) // photoID 배열을 사진 객체 배열로 전환
   },
-  
+
   // Custom Scalar Type
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
@@ -116,7 +138,7 @@ const resolvers = {
     parseValue: value => new Date(value),
     serialize: value => new Date(value).toISOString(),
     parseLiteral: ast => ast.value
-  })
+  }),
 };
 
 // export default resolvers

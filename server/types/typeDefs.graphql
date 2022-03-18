@@ -8,6 +8,11 @@ type User {
   inPhotos: [Photo!]!
 }
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 enum PhotoCategory {
   SELFIE
   PORTRAIT
@@ -36,8 +41,11 @@ input PostPhotoInput {
 type Query {
   totalPhotos: Int!
   allPhotos(after: DateTime): [Photo!]!
+  totalUsers: Int!
+  allUsers: [User!]!
 }
 
 type Mutation {
   postPhoto(input: PostPhotoInput!): Photo!
+  githubAuth(code: String!): AuthPayload!
 }
