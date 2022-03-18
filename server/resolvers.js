@@ -1,6 +1,4 @@
-const { GraphQLScalarType } = require('graphql'); 
-const { requestGithubToken } = require('./utils/auth/githubAuth');
-const { requestGithubUserAccount } = require('./utils/auth/githubAuth');
+const { GraphQLScalarType } = require('graphql');
 const githubAuthResolver = require('./resolvers/auth')
 
 let _id = 0;

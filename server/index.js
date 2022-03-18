@@ -22,7 +22,12 @@ const resolvers = require('./resolvers');
     {
        useNewUrlParser: true
     }
-  );
+  ).then((res) => {
+    console.log('MongoDB connected...')
+    return res;
+  }).catch((e) => {
+    console.error('MongoDB cannot connect...')
+  });
 
   const db = client.db();
 

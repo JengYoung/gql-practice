@@ -15,7 +15,6 @@ const requestGithubToken = async (credentials) => {
 
     return await res.json();
   } catch(e) {
-    console.log("요긴가?")
     throw new Error(JSON.stringify(e));
   }  
 };

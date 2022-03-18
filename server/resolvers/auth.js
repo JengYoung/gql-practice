@@ -5,15 +5,8 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 const authorizeWithGithub = async (credentials) => {
   const { access_token } = await requestGithubToken(credentials);
-  // console.log('access_token', access_token)
   const githubUser = await requestGithubUserAccount(access_token);
 
-  // console.log('result: ', {
-  //   ...githubUser,
-  //   access_token
-  // })
-
-  console.log('githubUserMessage: ', githubUser.message)
   return {
     ...githubUser,
     access_token
@@ -37,7 +30,6 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
     console.log("resolver: ", name, login, access_token, avatar_url)
   
     if (message) {
-      console.log("message: ", message)
       throw new Error(message);
     }
   
@@ -48,18 +40,15 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
       avatar: avatar_url
     };
   
-    const {
-      ops
-    } = await db
+    const { ops: [user] } = await db
       .collection("users")
       .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
-    console.log(ops)
   
-    console.log("ops, token: ", ops, access_token)
+    console.log("ops, token: ", user, access_token)
 
     return { user, token: access_token };
   } catch(e) {
-    console.log('hi...')
+    console.log('githubAuthResolver error occurred...', e)
     throw new Error(e)
   }
 }
