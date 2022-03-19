@@ -30,6 +30,7 @@ const resolvers = require('./resolvers');
   });
 
   const db = client.db();
+  db.collection('users')
 
   const context = { db };
 

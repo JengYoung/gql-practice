@@ -1,6 +1,7 @@
 scalar DateTime
 
 type User {
+  _id: String!
   githubLogin: ID!
   name: String
   avatar: String

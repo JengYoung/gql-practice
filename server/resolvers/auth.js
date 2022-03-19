@@ -39,12 +39,11 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
       githubToken: access_token,
       avatar: avatar_url
     };
-  
-    const { ops: [user] } = await db
-      .collection("users")
-      .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
-  
-    console.log("ops, token: ", user, access_token)
+    await db.collection("users").replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
+    
+    const user = await db.collection("users").findOne(latestUserInfo);
+    // console.log("after: ", await res.findOne(latestUserInfo))
+    // console.log("ops, token: ", user, access_token)
 
     return { user, token: access_token };
   } catch(e) {
