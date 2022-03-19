@@ -40,13 +40,14 @@ input PostPhotoInput {
 }
 
 type Query {
+  me: User # NOTE: null = cannot process authentication
   totalPhotos: Int!
   allPhotos(after: DateTime): [Photo!]!
   totalUsers: Int!
   allUsers: [User!]!
 }
 
-type Mutation {
+type Mutation { 
   postPhoto(input: PostPhotoInput!): Photo!
   githubAuth(code: String!): AuthPayload!
 }

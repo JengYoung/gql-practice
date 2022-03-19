@@ -27,7 +27,7 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
       code: code,
     });
   
-    console.log("resolver: ", name, login, access_token, avatar_url)
+    // console.log("resolver: ", name, login, access_token, avatar_url)
   
     if (message) {
       throw new Error(message);
