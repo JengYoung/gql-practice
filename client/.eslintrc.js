@@ -21,6 +21,8 @@ module.exports = {
   rules: {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "react/prop-types": "off",
+    "no-empty-pattern": "off",
   },
   settings: {
     jest: {
