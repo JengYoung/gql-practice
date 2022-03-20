@@ -1,5 +1,8 @@
+const { setInternalBufferSize } = require('bson');
 const { GraphQLScalarType } = require('graphql');
 const githubAuthResolver = require('./resolvers/auth')
+const fetch = require('node-fetch');
+
 
 let _id = 0;
 // server Test Data
@@ -93,26 +96,50 @@ const resolvers = {
   Mutation: {
     // 리졸버 함수의 첫 번째 인자는 부모 객체에 대한 참조이다. (여기서는 Mutation)
     // 두 번째 인자는 뮤테이션에 넣어 줄 GraphQL 인자이다.
-    postPhoto(parent, args) { 
+    postPhoto: async (parent, args, { db, currentUser }) => {
+      if (!currentUser) {
+        throw new Error("Only an authorized user can post a photo.");
+      } 
+      
       const newPhoto = {
-        id: _id++,
         ...args.input,
+        userID: currentUser.githubLogin,
         created: new Date()
       }
       
-      photos.push(newPhoto)
+      const { insertedIds } = await db.collection("photos").insert(newPhoto);
+      newPhoto.id = insertedIds[0];
 
       return newPhoto;
     },
     githubAuth: async (parent, args, db) => {
       return await githubAuthResolver(parent, args, db);
+    },
+
+    // NOTE: 생성할 임시 사용자 수를 인자로 받아 사용자 리스트를 반환하는 뮤테이션
+    addFakeUsers: async (root, { count }, { db }) => {
+      const randomUserAPI = `https://randomuser.me/api/?results=${count}`;
+
+      const { results } = await fetch(randomUserAPI).then(res => res.json());
+
+      const users = results.map(result => ({ 
+        githubLogin: result.login.username,
+        name: `${result.name.first} ${result.name.last}`,
+        avatar: result.picture.thumbnail,
+        githubToken: result.login.sha1
+      }));
+
+      await db.collection('users').insert(users);
+
+      return users;
     }
   },
 
   Photo: {
-    url: parent => `http://yoursite.com/img/${parent.id}.jpg`, // resolver 함수에 전달되는 첫 번째 인자는 언제나 `parent` 객체이다.
-    postedBy: parent => {
-      return users.find(u => u.githubLogin === parent.githubUser)
+    id: parent => parent.id || parent._id,
+    url: parent => `/img/photos/${parent._id}.jpg`, // resolver 함수에 전달되는 첫 번째 인자는 언제나 `parent` 객체이다.
+    postedBy: (parent, args, { db }) => {
+      return db.collection('users').findOne({ githubLogin: parent.userID })
     },
     taggedUsers: parent => tags
       .filter(tag => tag.photoID === parent.id) // 현재 사진에 대한 태그만 배열에 담아 반환
@@ -120,7 +147,7 @@ const resolvers = {
       .map(userID => users.find(u => u.githubLogin === userID))
   },
 
-  User: {
+  User: { 
     postedPhotos: parent => {
       return photos.filter(p => p.githubUser === parent.githubLogin)
     },

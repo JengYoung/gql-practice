@@ -50,4 +50,5 @@ type Query {
 type Mutation { 
   postPhoto(input: PostPhotoInput!): Photo!
   githubAuth(code: String!): AuthPayload!
+  addFakeUsers(count: Int = 1): [User!]! # 임시 사용자 뮤테이션
 }
