@@ -6,6 +6,7 @@ import query from "./graphql/query";
 import mutation from "./graphql/mutation";
 import client from "./graphql/client";
 import { gql } from "apollo-boost";
+import Users from "./components/Users";
 
 function App() {
   const API_END_POINT = process.env.REACT_APP_API_END_POINT;
@@ -50,13 +51,14 @@ function App() {
 
   return (
     <div>
-      {users.map((user, index) => (
+      {/* {users.map((user, index) => (
         <div key={`${user.githubLogin}${index}`}>
           <img src={user.avatar} alt="image" />
           {user.name}
         </div>
       ))}
-      <button onClick={addUser}>Add User</button>
+      <button onClick={addUser}>Add User</button> */}
+      <Users></Users>
     </div>
   );
 }
