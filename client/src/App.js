@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import { request } from "graphql-request";
+// import { request } from "graphql-request";
 
-import query from "./graphql/query";
-import mutation from "./graphql/mutation";
+// import query from "./graphql/query";
+// import mutation from "./graphql/mutation";
 import client from "./graphql/client";
 import { gql } from "apollo-boost";
 import Users from "./components/Users";
@@ -12,15 +12,15 @@ function App() {
   const API_END_POINT = process.env.REACT_APP_API_END_POINT;
   console.log(API_END_POINT);
 
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
 
-  const addUser = () => {
-    console.log("hi!");
-    request(API_END_POINT, mutation, { count: 1 }).then((res) => {});
-    request(API_END_POINT, query).then(({ allUsers = [] }) => {
-      setUsers(() => allUsers);
-    });
-  };
+  // const addUser = () => {
+  //   console.log("hi!");
+  //   request(API_END_POINT, mutation, { count: 1 }).then((res) => {});
+  //   request(API_END_POINT, query).then(({ allUsers = [] }) => {
+  //     setUsers(() => allUsers);
+  //   });
+  // };
 
   useEffect(() => {
     async function testFetch() {
@@ -41,12 +41,6 @@ function App() {
       }
     }
     testFetch();
-  }, [users]);
-
-  useEffect(() => {
-    addUser();
-
-    return () => setUsers(() => []);
   }, []);
 
   return (

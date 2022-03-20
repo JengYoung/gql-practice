@@ -5,7 +5,7 @@ import UserList from "./UserList";
 
 const Users = () => {
   return (
-    <Query query={allUsers}>
+    <Query query={allUsers} pollInterval={10000}>
       {({ data, loading, refetch }) => (
         <>
           <p>
@@ -13,7 +13,7 @@ const Users = () => {
           </p>
           {!loading && (
             <UserList
-              count={data.totalusers}
+              count={data.totalUsers}
               users={data.allUsers}
               refetchUsers={refetch}
             />
