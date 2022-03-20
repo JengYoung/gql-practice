@@ -1,7 +1,7 @@
-const {
+import {
   requestGithubToken,
   requestGithubUserAccount,
-} = require('../utils/auth/githubAuth');
+} from '../utils/auth/githubAuth.js';
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -48,4 +48,4 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
   }
 };
 
-module.exports = githubAuthResolver;
+export default githubAuthResolver;

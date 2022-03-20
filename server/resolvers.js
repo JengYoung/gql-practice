@@ -1,6 +1,7 @@
-const { GraphQLScalarType } = require('graphql');
-const githubAuthResolver = require('./resolvers/auth');
-const fetch = require('node-fetch');
+import { GraphQLScalarType } from 'graphql';
+
+import githubAuthResolver from './resolvers/auth.js';
+import fetch from 'node-fetch';
 
 let _id = 0;
 // server Test Data
@@ -176,4 +177,4 @@ const resolvers = {
 };
 
 // export default resolvers
-module.exports = resolvers;
+export default resolvers;

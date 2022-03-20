@@ -1,18 +1,21 @@
-const { MongoClient } = require('mongodb');
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-const expressPlayground =
-  require('graphql-playground-middleware-express').default;
-const { ApolloServer } = require('apollo-server-express');
-const express = require('express');
+import express from 'express';
+import { MongoClient } from 'mongodb';
+
+import expressPlayground from 'graphql-playground-middleware-express';
+import { ApolloServer } from 'apollo-server-express';
+
+import { readFileSync } from 'fs';
+
+import resolvers from './resolvers.js';
 
 /*
  * NOTE: 리졸버 함수에서는 정수, 문자열, 불리언 같은 값 외에도 객체 역시 반환이 가능하다.
  */
 
-const { redFileSync, readFileSync } = require('fs');
 const typeDefs = readFileSync('./types/typeDefs.graphql', 'UTF-8');
-const resolvers = require('./resolvers');
 
 (async () => {
   const app = express();
@@ -53,7 +56,7 @@ const resolvers = require('./resolvers');
 
   // HOME ROUTE를 만듦
   app.get('/', (req, res) => res.end('PhotoShare API에 오신 것을 환영합니다!'));
-  app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+  app.get('/playground', expressPlayground.default({ endpoint: '/graphql' }));
 
   // 특정 포트 리스닝
 

@@ -1,8 +1,9 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
-const requestGithubToken = async (credentials) => {
+export const requestGithubToken = async (credentials) => {
   try {
     const res = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
@@ -19,7 +20,7 @@ const requestGithubToken = async (credentials) => {
   }
 };
 
-const requestGithubUserAccount = async (token) => {
+export const requestGithubUserAccount = async (token) => {
   try {
     const res = await fetch('https://api.github.com/user', {
       method: 'GET',
@@ -32,9 +33,4 @@ const requestGithubUserAccount = async (token) => {
   } catch (e) {
     throw new Error(e);
   }
-};
-
-module.exports = {
-  requestGithubToken,
-  requestGithubUserAccount,
 };
