@@ -2,14 +2,23 @@
   "main": "index.js",
   "dependencies": {
     "apollo-server-express": "^3.6.4",
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "graphql": "^16.3.0",
-    "mongodb": "^4.4.1"
+    "graphql-playground-middleware-express": "^1.7.23",
+    "mongodb": "^4.4.1",
+    "node-fetch": "^3.2.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.6.0"
   },
   "scripts": {
-    "start:server": "nodemon -e js,json,graphql"
+    "start:server": "nodemon -e js,json,graphql",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   }
 }

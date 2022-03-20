@@ -1,7 +1,8 @@
 const { MongoClient } = require('mongodb');
-require('dotenv').config()
+require('dotenv').config();
 
-const expressPlayground = require('graphql-playground-middleware-express').default;
+const expressPlayground =
+  require('graphql-playground-middleware-express').default;
 const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 
@@ -17,17 +18,16 @@ const resolvers = require('./resolvers');
   const app = express();
   const MONGO_DB = process.env.DB_HOST;
 
-  const client = await MongoClient.connect(
-    MONGO_DB,
-    {
-       useNewUrlParser: true
-    }
-  ).then((res) => {
-    console.log('MongoDB connected...')
-    return res;
-  }).catch((e) => {
-    console.error('MongoDB cannot connect...')
-  });
+  const client = await MongoClient.connect(MONGO_DB, {
+    useNewUrlParser: true,
+  })
+    .then((res) => {
+      console.log('MongoDB connected...');
+      return res;
+    })
+    .catch((e) => {
+      console.error('MongoDB cannot connect...');
+    });
 
   const db = client.db();
 
@@ -39,27 +39,27 @@ const resolvers = require('./resolvers');
     context: async ({ req }) => {
       const githubToken = req.headers.authorization;
       const currentUser = await db.collection('users').findOne({ githubToken });
-      
+
       return { db, currentUser };
-    }
+    },
   });
 
   await server.start();
-  server.applyMiddleware({ app })
+  server.applyMiddleware({ app });
 
   /**
    * NOTE: applyMiddleware를 호출하여 미들웨어가 같은 경로에 마운트되도록 호출.
    */
 
   // HOME ROUTE를 만듦
-  app.get('/', (req, res) => res.end('PhotoShare API에 오신 것을 환영합니다!'))
-  app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
-
+  app.get('/', (req, res) => res.end('PhotoShare API에 오신 것을 환영합니다!'));
+  app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 
   // 특정 포트 리스닝
 
-  app
-    .listen({ port: 4000 }, () => {
-      console.log(`GraphQL Server running at http://localhost:4000${server.graphqlPath}`)
-    })
+  app.listen({ port: 4000 }, () => {
+    console.log(
+      `GraphQL Server running at http://localhost:4000${server.graphqlPath}`
+    );
+  });
 })();

@@ -1,4 +1,7 @@
-const { requestGithubToken, requestGithubUserAccount } = require("../utils/auth/githubAuth");
+const {
+  requestGithubToken,
+  requestGithubUserAccount,
+} = require('../utils/auth/githubAuth');
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -9,43 +12,40 @@ const authorizeWithGithub = async (credentials) => {
 
   return {
     ...githubUser,
-    access_token
-  }
-}
+    access_token,
+  };
+};
 
 const githubAuthResolver = async (parent, { code }, { db }) => {
   try {
-    let { 
-      message,
-      access_token,
-      avatar_url,
-      login,
-      name
-    } = await authorizeWithGithub({
-      client_id: GITHUB_CLIENT_ID,
-      client_secret: GITHUB_CLIENT_SECRET,
-      code: code,
-    });
-  
+    let { message, access_token, avatar_url, login, name } =
+      await authorizeWithGithub({
+        client_id: GITHUB_CLIENT_ID,
+        client_secret: GITHUB_CLIENT_SECRET,
+        code: code,
+      });
+
     if (message) {
       throw new Error(message);
     }
-  
+
     let latestUserInfo = {
       name,
       githubLogin: login,
       githubToken: access_token,
-      avatar: avatar_url
+      avatar: avatar_url,
     };
-    await db.collection("users").replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
-    
-    const user = await db.collection("users").findOne(latestUserInfo);
+    await db
+      .collection('users')
+      .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
+
+    const user = await db.collection('users').findOne(latestUserInfo);
 
     return { user, token: access_token };
-  } catch(e) {
-    console.log('githubAuthResolver error occurred...', e)
-    throw new Error(e)
+  } catch (e) {
+    console.log('githubAuthResolver error occurred...', e);
+    throw new Error(e);
   }
-}
+};
 
-module.exports = githubAuthResolver
+module.exports = githubAuthResolver;
