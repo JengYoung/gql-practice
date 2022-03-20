@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-/* eslint-disable-next-line */
+
 import { request } from "graphql-request";
 
 import query from "./graphql/query";
@@ -24,6 +24,7 @@ function App() {
   useEffect(() => {
     async function testFetch() {
       try {
+        console.log("before cache: ", client.extract());
         const res = await client.query({
           query: gql`
             {
@@ -33,12 +34,13 @@ function App() {
           `,
         });
         console.log("res: ", res);
+        console.log("after cache: ", client.extract());
       } catch (e) {
         console.log("error: ", e);
       }
     }
     testFetch();
-  });
+  }, [users]);
 
   useEffect(() => {
     addUser();
