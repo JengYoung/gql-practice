@@ -5,7 +5,11 @@ import UserList from "./UserList";
 
 const Users = () => {
   return (
-    <Query query={allUsers} pollInterval={10000}>
+    /* 
+      pollInterval - 폴링을 계속해서 (인자)초마다 하도록 함. 
+      이를 제어하는 `stopPolling` `startPolling` `fetchMore(다음 페이지 데이터 가져오는 함수)` 등을 추가로 제공한다. 
+    */
+    <Query query={allUsers}>
       {({ data, loading, refetch }) => (
         <>
           <p>
