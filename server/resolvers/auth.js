@@ -27,8 +27,6 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
       code: code,
     });
   
-    // console.log("resolver: ", name, login, access_token, avatar_url)
-  
     if (message) {
       throw new Error(message);
     }
@@ -42,8 +40,6 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
     await db.collection("users").replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
     
     const user = await db.collection("users").findOne(latestUserInfo);
-    // console.log("after: ", await res.findOne(latestUserInfo))
-    // console.log("ops, token: ", user, access_token)
 
     return { user, token: access_token };
   } catch(e) {
