@@ -7,6 +7,8 @@ import React, { useEffect } from "react";
 import client from "./graphql/client";
 import { gql } from "apollo-boost";
 import Users from "./components/Users";
+import { BrowserRouter } from "react-router-dom";
+import AuthorizedUserButton from "./components/AuthorizedUserButton";
 
 function App() {
   const API_END_POINT = process.env.REACT_APP_API_END_POINT;
@@ -44,16 +46,12 @@ function App() {
   }, []);
 
   return (
-    <div>
-      {/* {users.map((user, index) => (
-        <div key={`${user.githubLogin}${index}`}>
-          <img src={user.avatar} alt="image" />
-          {user.name}
-        </div>
-      ))}
-      <button onClick={addUser}>Add User</button> */}
-      <Users></Users>
-    </div>
+    <BrowserRouter>
+      <>
+        <AuthorizedUserButton />
+        <Users></Users>
+      </>
+    </BrowserRouter>
   );
 }
 
