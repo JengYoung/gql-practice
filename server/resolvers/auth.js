@@ -3,9 +3,6 @@ import {
   requestGithubUserAccount,
 } from '../utils/auth/githubAuth.js';
 
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-
 const authorizeWithGithub = async (credentials) => {
   const { access_token } = await requestGithubToken(credentials);
   const githubUser = await requestGithubUserAccount(access_token);
@@ -17,6 +14,9 @@ const authorizeWithGithub = async (credentials) => {
 };
 
 const githubAuthResolver = async (parent, { code }, { db }) => {
+  const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+  const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+
   try {
     let { message, access_token, avatar_url, login, name } =
       await authorizeWithGithub({
@@ -35,6 +35,7 @@ const githubAuthResolver = async (parent, { code }, { db }) => {
       githubToken: access_token,
       avatar: avatar_url,
     };
+
     await db
       .collection('users')
       .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
