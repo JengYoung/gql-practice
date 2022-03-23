@@ -6,7 +6,13 @@ import { ApolloProvider } from "react-apollo";
 
 import reportWebVitals from "./reportWebVitals";
 
-import client from "./graphql/client";
+import client, { cache } from "./graphql/client";
+
+if (localStorage["apollo-cache-persist"]) {
+  const cacheData = JSON.parse(localStorage["apollo-cache-persist"]);
+  console.log("cacheData: ", cacheData);
+  cache.restore(cacheData);
+}
 
 ReactDOM.render(
   <React.StrictMode>
