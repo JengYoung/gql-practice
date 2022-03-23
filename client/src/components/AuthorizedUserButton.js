@@ -3,6 +3,7 @@ import { Mutation } from "react-apollo";
 import { useNavigate } from "react-router-dom";
 import MUTATION_GITHUB_AUTH from "../graphql/mutations/MUTATION_GITHUB_AUTH";
 import allUsers from "../graphql/queries/allUsers";
+import Me from "./Me";
 
 const AuthorizedUserButton = () => {
   const [state, setState] = useState({
@@ -48,11 +49,18 @@ const AuthorizedUserButton = () => {
     >
       {(mutation) => {
         githubAuthMutation.current = mutation;
-        console.log(mutation);
+
+        // return (
+        //   <button onClick={requestCode} disabled={state.signingIn}>
+        //     Sign In with GitHub
+        //   </button>
+        // );
         return (
-          <button onClick={requestCode} disabled={state.signingIn}>
-            Sign In with GitHub
-          </button>
+          <Me
+            signingIn={state.signingIn}
+            requestCode={requestCode}
+            logout={() => localStorage.removeItem("token")}
+          />
         );
       }}
     </Mutation>
