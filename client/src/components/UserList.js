@@ -5,7 +5,17 @@ import allUsers from "../graphql/queries/allUsers";
 import UserListItem from "./UserListItem";
 
 const UserList = ({ count, users, refetchUsers }) => {
-  console.log(count);
+  const updateUserCache = (cache, { data: { addFakeUsers } }) => {
+    const data = cache.readQuery({ query: allUsers });
+    const nextData = {
+      ...data,
+      totalUsers: data.totalUsers + addFakeUsers.length,
+      allUsers: [...data.allUsers, ...addFakeUsers],
+    };
+
+    cache.writeQuery({ query: allUsers, data: nextData });
+  };
+
   return (
     <div>
       <p>
@@ -18,22 +28,24 @@ const UserList = ({ count, users, refetchUsers }) => {
       <Mutation
         mutation={addFakeUsers}
         variables={{ count: 1 }}
-        refetchQueries={[{ query: allUsers }]}
+        update={updateUserCache}
+        // refetchQueries={[{ query: allUsers }]}
       >
         {(addFakeUsers) => (
-          <button onClick={addFakeUsers}>임시 사용자 추가</button>
+          <>
+            <button onClick={addFakeUsers}>임시 사용자 추가</button>
+            <ul>
+              {users.map((user) => (
+                <UserListItem
+                  key={user.githubLogin}
+                  name={user.name}
+                  avatar={user.avatar}
+                />
+              ))}
+            </ul>
+          </>
         )}
       </Mutation>
-
-      <ul>
-        {users.map((user) => (
-          <UserListItem
-            key={user.githubLogin}
-            name={user.name}
-            avatar={user.avatar}
-          />
-        ))}
-      </ul>
     </div>
   );
 };

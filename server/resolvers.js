@@ -83,6 +83,7 @@ const resolvers = {
     },
 
     allUsers: (parent, args, { db }) => {
+      console.log('allUsers!');
       return db.collection('users').find().toArray();
     },
   },

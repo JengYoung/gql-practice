@@ -2,6 +2,7 @@ import ApolloClient, { InMemoryCache } from "apollo-boost";
 import { persistCache } from "apollo-cache-persist";
 
 export const cache = new InMemoryCache();
+
 persistCache({
   cache,
   storage: localStorage,
