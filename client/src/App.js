@@ -13,9 +13,6 @@ import AuthorizedUserButton from "./components/AuthorizedUserButton";
 import client from "./graphql/client";
 
 function App() {
-  const API_END_POINT = process.env.REACT_APP_API_END_POINT;
-  console.log(API_END_POINT);
-
   // const [users, setUsers] = useState([]);
 
   // const addUser = () => {
@@ -26,26 +23,26 @@ function App() {
   //   });
   // };
 
-  useEffect(() => {
-    async function testFetch() {
-      try {
-        console.log("before cache: ", client.extract());
-        const res = await client.query({
-          query: gql`
-            {
-              totalUsers
-              totalPhotos
-            }
-          `,
-        });
-        console.log("res: ", res);
-        console.log("after cache: ", client.extract());
-      } catch (e) {
-        console.log("error: ", e);
-      }
-    }
-    testFetch();
-  }, []);
+  // useEffect(() => {
+  //   async function testFetch() {
+  //     try {
+  //       console.log("before cache: ", client.extract());
+  //       const res = await client.query({
+  //         query: gql`
+  //           {
+  //             totalUsers
+  //             totalPhotos
+  //           }
+  //         `,
+  //       });
+  //       console.log("res: ", res);
+  //       console.log("after cache: ", client.extract());
+  //     } catch (e) {
+  //       console.log("error: ", e);
+  //     }
+  //   }
+  //   testFetch();
+  // }, []);
 
   return (
     <BrowserRouter>

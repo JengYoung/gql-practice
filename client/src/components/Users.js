@@ -4,7 +4,6 @@ import allUsers from "../graphql/queries/allUsers";
 import UserList from "./UserList";
 
 const Users = () => {
-  console.log("Users Component re-render");
   return (
     /* 
       pollInterval - 폴링을 계속해서 (인자)초마다 하도록 함. 
@@ -12,7 +11,6 @@ const Users = () => {
     */
     <Query query={allUsers} fetchPolicy="cache-and-network">
       {({ data, loading, refetch }) => {
-        console.log("Users Component rendered");
         return (
           <>
             <p>

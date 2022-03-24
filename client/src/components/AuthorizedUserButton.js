@@ -45,7 +45,6 @@ const AuthorizedUserButton = ({ client }) => {
   };
 
   const onLogout = () => {
-    console.log("logout!");
     localStorage.removeItem("token");
 
     const data = client.readQuery({ query: allUsers });
