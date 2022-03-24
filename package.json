@@ -2,6 +2,7 @@
   "dependencies": {
     "@emotion/react": "^11.8.2",
     "apollo-cache-persist": "^0.1.1",
+    "lodash.flowright": "^3.5.0",
     "react-router-dom": "^6.2.2"
   }
 }

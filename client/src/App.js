@@ -4,11 +4,13 @@ import React, { useEffect } from "react";
 
 // import query from "./graphql/query";
 // import mutation from "./graphql/mutation";
-import client from "./graphql/client";
 import { gql } from "apollo-boost";
-import Users from "./components/Users";
 import { BrowserRouter } from "react-router-dom";
+
+import Users from "./components/Users";
 import AuthorizedUserButton from "./components/AuthorizedUserButton";
+
+import client from "./graphql/client";
 
 function App() {
   const API_END_POINT = process.env.REACT_APP_API_END_POINT;

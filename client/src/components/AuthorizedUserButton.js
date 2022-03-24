@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Mutation } from "react-apollo";
+import { Mutation, withApollo } from "react-apollo";
+import { flowRight as compose } from "lodash";
+
 import { useNavigate } from "react-router-dom";
 import MUTATION_GITHUB_AUTH from "../graphql/mutations/MUTATION_GITHUB_AUTH";
 import allUsers from "../graphql/queries/allUsers";
@@ -67,4 +69,5 @@ const AuthorizedUserButton = () => {
   );
 };
 
-export default AuthorizedUserButton;
+// if you wanna set series of HOC patterns, then you can use lodash's flowRight(as compose)
+export default compose(withApollo)(AuthorizedUserButton);
