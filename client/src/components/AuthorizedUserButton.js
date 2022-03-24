@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Mutation, withApollo } from "react-apollo";
-import { flowRight as compose } from "lodash";
+// import { flowRight as compose } from "lodash";
 
 import { useNavigate } from "react-router-dom";
 import MUTATION_GITHUB_AUTH from "../graphql/mutations/MUTATION_GITHUB_AUTH";
 import allUsers from "../graphql/queries/allUsers";
 import Me from "./Me";
 
-const AuthorizedUserButton = () => {
+const AuthorizedUserButton = ({ client }) => {
   const [state, setState] = useState({
     signingIn: false,
+    data: client.readQuery({ query: allUsers }) ?? null,
   });
   const githubAuthMutation = useRef(null);
 
@@ -27,7 +28,7 @@ const AuthorizedUserButton = () => {
     }
 
     return () => {
-      setState((state) => ({ signingIn: false }));
+      setState((state) => ({ ...state, signingIn: false }));
       githubAuthMutation.current = null;
     };
   }, []);
@@ -42,6 +43,29 @@ const AuthorizedUserButton = () => {
     navigate("/", { replace: true });
     setState((state) => ({ ...state, signingIn: false }));
   };
+
+  const onLogout = () => {
+    console.log("logout!");
+    localStorage.removeItem("token");
+
+    const data = client.readQuery({ query: allUsers });
+    setState((state) => ({
+      ...state,
+      data: {
+        ...data,
+        me: null,
+      },
+    }));
+
+    client.writeQuery({ query: allUsers, data: state.data });
+  };
+
+  useEffect(() => {
+    if (!state.data?.me) return;
+    if (state.data.me === null) {
+      setState((state) => ({ ...state, signingIn: false }));
+    }
+  }, [state.data]);
 
   return (
     <Mutation
@@ -61,7 +85,7 @@ const AuthorizedUserButton = () => {
           <Me
             signingIn={state.signingIn}
             requestCode={requestCode}
-            logout={() => localStorage.removeItem("token")}
+            logout={() => onLogout()}
           />
         );
       }}
@@ -70,4 +94,4 @@ const AuthorizedUserButton = () => {
 };
 
 // if you wanna set series of HOC patterns, then you can use lodash's flowRight(as compose)
-export default compose(withApollo)(AuthorizedUserButton);
+export default withApollo(AuthorizedUserButton);
