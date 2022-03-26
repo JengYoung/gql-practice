@@ -8,10 +8,19 @@ import reportWebVitals from "./reportWebVitals";
 
 import client, { cache } from "./graphql/client";
 
+// import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+// import { createClient } from "graphql-ws";
+
 if (localStorage["apollo-cache-persist"]) {
   const cacheData = JSON.parse(localStorage["apollo-cache-persist"]);
   cache.restore(cacheData);
 }
+
+// const wsLink = new GraphQLWsLink(
+//   createClient({
+//     url: "ws://localhost:4000/graphql",
+//   })
+// );
 
 ReactDOM.render(
   <React.StrictMode>
