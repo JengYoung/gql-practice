@@ -56,15 +56,16 @@ type Mutation {
 
 type Subscription {
   newPhoto: Photo!
+  newUser: User!
 }
 
-subscription {
-  newPhoto {
-    url
-    category
-    postedBy {
-      githubLogin
-      avatar
-    }
-  }
-}
+# subscription {
+#   newPhoto {
+#     url
+#     category
+#     postedBy {
+#       githubLogin
+#       avatar
+#     }
+#   }
+# }

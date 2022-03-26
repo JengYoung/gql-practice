@@ -1,16 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 // import { request } from "graphql-request";
 
 // import query from "./graphql/query";
 // import mutation from "./graphql/mutation";
-import { gql } from "apollo-boost";
 import { BrowserRouter } from "react-router-dom";
 
 import Users from "./components/Users";
 import AuthorizedUserButton from "./components/AuthorizedUserButton";
-
-import client from "./graphql/client";
 
 function App() {
   // const [users, setUsers] = useState([]);

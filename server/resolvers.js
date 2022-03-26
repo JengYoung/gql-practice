@@ -91,7 +91,7 @@ const resolvers = {
   Mutation: {
     // 리졸버 함수의 첫 번째 인자는 부모 객체에 대한 참조이다. (여기서는 Mutation)
     // 두 번째 인자는 뮤테이션에 넣어 줄 GraphQL 인자이다.
-    postPhoto: async (parent, args, { db, currentUser }) => {
+    postPhoto: async (parent, args, { db, currentUser, pubsub }) => {
       if (!currentUser) {
         throw new Error('Only an authorized user can post a photo.');
       }
@@ -104,6 +104,8 @@ const resolvers = {
 
       const { insertedIds } = await db.collection('photos').insert(newPhoto);
       newPhoto.id = insertedIds[0];
+
+      pubsub.publish('photo-added', { newPhoto });
 
       return newPhoto;
     },
@@ -140,6 +142,14 @@ const resolvers = {
         token: user.githubToken,
         user,
       };
+    },
+  },
+
+  Subscription: {
+    newPhoto: {
+      subscribe: (parent, args, { pubsub }) => {
+        return pubsub.asyncIterator('photo-added');
+      },
     },
   },
 
